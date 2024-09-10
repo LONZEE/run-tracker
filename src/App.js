@@ -8,6 +8,7 @@ function App() {
   const [miles, setMiles] = useState("");
   const [pace, setPace] = useState("");
   const [time, setTime] = useState("");
+  const [heart, setHeart] = useState("");
 
   // Save to MongoDB
   const handleSaveToDatabase = async () => {
@@ -22,7 +23,7 @@ function App() {
 
   // Download as Excel
   const handleExportExcel = () => {
-    const data = [{ miles, pace, time }];
+    const data = [{ miles, pace, time, heart }];
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Run Data");
@@ -32,7 +33,7 @@ function App() {
 
   // Download as CSV
   const handleExportCSV = () => {
-    const data = [{ miles, pace, time }];
+    const data = [{ miles, pace, time, heart }];
     const worksheet = XLSX.utils.json_to_sheet(data);
     const csvData = XLSX.utils.sheet_to_csv(worksheet);
 
@@ -80,6 +81,16 @@ function App() {
             value={time}
             onChange={(e) => setTime(e.target.value)}
             placeholder="Enter time"
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Average HR:</label>
+          <input
+            type="number"
+            className="form-control"
+            value={heart}
+            onChange={(e) => setHeart(e.target.value)}
+            placeholder="Enter Average HR"
           />
         </div>
       </form>

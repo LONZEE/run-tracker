@@ -16,6 +16,7 @@ const runSchema = new mongoose.Schema({
   miles: String,
   pace: String,
   time: String,
+  heart: String,
 });
 
 const Run = mongoose.model("Run", runSchema);
