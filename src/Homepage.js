@@ -8,7 +8,18 @@ function Homepage({ user }) {
   const [pace, setPace] = useState("");
   const [time, setTime] = useState("");
   const [heart, setHeart] = useState("");
-
+  const [userData, setUserData] = useState([]);
+  
+  // Fetch all user data from MongoDB
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5001/api/runs/${user.username}`);
+      setUserData(response.data);
+    } catch (error) {
+      console.error("Error fetching user data from MongoDB:", error);
+    }
+  };
+  
   // Save to MongoDB
   const handleSaveToDatabase = async () => {
     const runData = { user: user.username, miles, pace, time, heart };
@@ -19,23 +30,23 @@ function Homepage({ user }) {
       console.error("Error saving data to MongoDB:", error);
     }
   };
-
+  
   // Download as Excel
-  const handleExportExcel = () => {
-    const data = [{ user: user.username, miles, pace, time, heart }];
-    const worksheet = XLSX.utils.json_to_sheet(data);
+  const handleExportExcel = async () => {
+    await fetchUserData();
+    const worksheet = XLSX.utils.json_to_sheet(userData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Run Data");
-
+  
     XLSX.writeFile(workbook, "run_data.xlsx");
   };
-
+  
   // Download as CSV
-  const handleExportCSV = () => {
-    const data = [{ user: user.username, miles, pace, time, heart }];
-    const worksheet = XLSX.utils.json_to_sheet(data);
+  const handleExportCSV = async () => {
+    await fetchUserData();
+    const worksheet = XLSX.utils.json_to_sheet(userData);
     const csvData = XLSX.utils.sheet_to_csv(worksheet);
-
+  
     const blob = new Blob([csvData], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -45,6 +56,7 @@ function Homepage({ user }) {
     a.click();
     document.body.removeChild(a);
   };
+  
 
   return (
     <div className="App container mt-5">
