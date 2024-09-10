@@ -16,6 +16,20 @@ mongoose.connect("mongodb+srv://edalopez90:HpUCam2el4IBjagR@rundata.6nuj1.mongod
   useUnifiedTopology: true,
 });
 
+const newUser = new User({
+  username: "exampleUser",
+  password: "examplePassword",
+});
+
+newUser.save((err) => {
+  if (err) {
+    console.error("Error saving user:", err);
+  } else {
+    console.log("User saved successfully!");
+  }
+  mongoose.connection.close();
+});
+
 const runSchema = new mongoose.Schema({
   miles: String,
   pace: String,
