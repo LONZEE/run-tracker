@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   const [miles, setMiles] = useState("");
@@ -45,33 +47,36 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Run Tracker</h1>
-      <form>
-        <div>
-          <label>Miles Ran:</label>
+    <div className="App container mt-5">
+      <h1 className="text-center mb-4">Run Tracker</h1>
+      <form className="border p-4 rounded shadow-sm">
+        <div className="mb-3">
+          <label className="form-label">Miles Ran:</label>
           <input
             type="number"
+            className="form-control"
             value={miles}
             onChange={(e) => setMiles(e.target.value)}
             placeholder="Enter miles"
           />
         </div>
 
-        <div>
-          <label>Pace (min/mile):</label>
+        <div className="mb-3">
+          <label className="form-label">Pace (min/mile):</label>
           <input
             type="text"
+            className="form-control"
             value={pace}
             onChange={(e) => setPace(e.target.value)}
             placeholder="Enter pace"
           />
         </div>
 
-        <div>
-          <label>Total Time (hh:mm:ss):</label>
+        <div className="mb-3">
+          <label className="form-label">Total Time (hh:mm:ss):</label>
           <input
             type="text"
+            className="form-control"
             value={time}
             onChange={(e) => setTime(e.target.value)}
             placeholder="Enter time"
@@ -79,9 +84,17 @@ function App() {
         </div>
       </form>
 
-      <button onClick={handleSaveToDatabase}>Save to Database</button>
-      <button onClick={handleExportExcel}>Download Excel</button>
-      <button onClick={handleExportCSV}>Download CSV</button>
+      <div className="d-flex justify-content-between mt-4">
+        <button className="btn btn-primary" onClick={handleSaveToDatabase}>
+          Save to Database
+        </button>
+        <button className="btn btn-success" onClick={handleExportExcel}>
+          Download Excel
+        </button>
+        <button className="btn btn-warning" onClick={handleExportCSV}>
+          Download CSV
+        </button>
+      </div>
     </div>
   );
 }
