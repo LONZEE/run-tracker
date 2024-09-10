@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home Page</title>
+</head>
+<body>
+  <h1>Past User Entries</h1>
+  <ul>
+    <% users.forEach(user => { %>
+      <li><%= user.username %></li>
+    <% }) %>
+  </ul>
+</body>
+</html>
