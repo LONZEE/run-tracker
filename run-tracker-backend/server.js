@@ -3,17 +3,23 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const User = require("./User"); // Ensure this path is correct
-
+const dotenv = require('dotenv');
 const port = process.env.PORT || 5001;
-
 const app = express();
+
+
+dotenv.config();
+
 app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection
-mongoose.connect("mongodb+srv://edalopez90:HpUCam2el4IBjagR@rundata.6nuj1.mongodb.net/?retryWrites=true&w=majority&appName=RunData", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+
+mongoose.connection.once('open', function() {
+    console.log('Connected to MongoDB');
+}).on('error', function(error){
+    console.log('Connection error:', error);
 });
 
 const runSchema = new mongoose.Schema({
@@ -66,6 +72,22 @@ app.post("/api/login", async (req, res) => {
     res.status(200).send({ success: true, user });
   } else {
     res.status(400).send("Invalid username or password!");
+  }
+});
+
+app.get("/api/entries/:username", async (req, res) => {
+  const { username } = req.params;
+  if (!username) {
+    return res.status(400).send("Username is required!");
+  }
+  try {
+    const userEntries = await User.findOne({ username }).populate('entries');
+    if (!userEntries) {
+      return res.status(404).send("User not found!");
+    }
+    res.status(200).send({ success: true, entries: userEntries.entries });
+  } catch (error) {
+    res.status(500).send("An error occurred while fetching entries!");
   }
 });
 

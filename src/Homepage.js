@@ -11,16 +11,6 @@ function Homepage({ user }) {
   const [userData, setUserData] = useState([]);
   
   // Fetch all user data from MongoDB
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5001/api/runs/${user.username}`);
-      setUserData(response.data);
-    } catch (error) {
-      console.error("Error fetching user data from MongoDB:", error);
-    }
-  };
-  
-  // Save to MongoDB
   const handleSaveToDatabase = async () => {
     const runData = { user: user.username, miles, pace, time, heart };
     try {
@@ -30,31 +20,56 @@ function Homepage({ user }) {
       console.error("Error saving data to MongoDB:", error);
     }
   };
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5001/api/entries/${user.username}`);
+      return response.data.entries || [];
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return [];
+    }
+  };
   
   // Download as Excel
   const handleExportExcel = async () => {
-    await fetchUserData();
-    const worksheet = XLSX.utils.json_to_sheet(userData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Run Data");
+    try {
+      const userData = await fetchUserData();
+      if (!Array.isArray(userData) || userData.length === 0) {
+        alert("No data available to export!");
+        return;
+      }
+      const worksheet = XLSX.utils.json_to_sheet(userData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Run Data");
   
-    XLSX.writeFile(workbook, "run_data.xlsx");
+      XLSX.writeFile(workbook, "run_data.xlsx");
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+    }
   };
   
   // Download as CSV
   const handleExportCSV = async () => {
-    await fetchUserData();
-    const worksheet = XLSX.utils.json_to_sheet(userData);
-    const csvData = XLSX.utils.sheet_to_csv(worksheet);
+    try {
+      const userData = await fetchUserData();
+      if (!Array.isArray(userData) || userData.length === 0) {
+        alert("No data available to export!");
+        return;
+      }
+      const worksheet = XLSX.utils.json_to_sheet(userData);
+      const csvData = XLSX.utils.sheet_to_csv(worksheet);
   
-    const blob = new Blob([csvData], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "run_data.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      const blob = new Blob([csvData], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "run_data.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error exporting to CSV:", error);
+    }
   };
   
 
