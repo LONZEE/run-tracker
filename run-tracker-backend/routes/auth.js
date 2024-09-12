@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('./User');
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 router.post('/register', async (req, res) => {
@@ -36,5 +36,8 @@ router.post('/login', async (req, res) => {
     
     res.json({ success: true, user: { username: user.username } });
     });
+
+
+
 
 module.exports = router;
